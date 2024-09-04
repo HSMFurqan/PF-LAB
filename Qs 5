@@ -1,0 +1,14 @@
+INPUT: n, N
+
+IF N == 0 THEN
+    PRINT "Error: Division by zero"
+    EXIT
+
+IF n MOD N == 0 THEN
+    PRINT N, "is a divisor of", n
+    IF N MOD 2 == 0 THEN
+        PRINT N, "is an even number"
+    ELSE
+        PRINT N, "is an odd number"
+ELSE
+    PRINT N, "is not a divisor of", n
