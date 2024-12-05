@@ -1,0 +1,159 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Base Class: Vehicle
+class Vehicle {
+protected:
+    string make;
+    string model;
+    int year;
+    double price;
+
+public:
+    // Constructor to initialize vehicle attributes
+    Vehicle(string make, string model, int year, double price)
+        : make(make), model(model), year(year), price(price) {}
+
+    // Virtual function to calculate price (to be overridden in derived classes)
+    virtual double calculatePrice() {
+        return price;
+    }
+
+    // Virtual function to display vehicle details
+    virtual void displayDetails() {
+        cout << "Make: " << make << ", Model: " << model
+             << ", Year: " << year << ", Price: $" << calculatePrice() << endl;
+    }
+
+    // Virtual Destructor
+    virtual ~Vehicle() {}
+};
+
+// Derived Class: Car
+class Car : public Vehicle {
+private:
+    bool isElectric;
+
+public:
+    // Constructor for car with electric attribute
+    Car(string make, string model, int year, double price, bool isElectric)
+        : Vehicle(make, model, year, price), isElectric(isElectric) {}
+
+    // Overriding calculatePrice for Car
+    double calculatePrice() override {
+        if (isElectric) {
+            return price + 5000;  // Extra price for electric cars
+        }
+        return price;
+    }
+
+    // Display car details
+    void displayDetails() override {
+        cout << "Car - ";
+        Vehicle::displayDetails();
+        cout << "Electric: " << (isElectric ? "Yes" : "No") << endl;
+    }
+};
+
+// Derived Class: Truck
+class Truck : public Vehicle {
+private:
+    double loadCapacity;
+
+public:
+    // Constructor for truck with load capacity
+    Truck(string make, string model, int year, double price, double loadCapacity)
+        : Vehicle(make, model, year, price), loadCapacity(loadCapacity) {}
+
+    // Overriding calculatePrice for Truck
+    double calculatePrice() override {
+        return price + (loadCapacity * 100);  // Price increases with load capacity
+    }
+
+    // Display truck details
+    void displayDetails() override {
+        cout << "Truck - ";
+        Vehicle::displayDetails();
+        cout << "Load Capacity: " << loadCapacity << " tons" << endl;
+    }
+};
+
+// Function to add vehicles
+void addVehicle(vector<Vehicle*>& vehicles) {
+    int choice;
+    cout << "Choose the vehicle type to add:\n";
+    cout << "1. Car\n2. Truck\n";
+    cin >> choice;
+
+    string make, model;
+    int year;
+    double price;
+
+    cout << "Enter vehicle make: ";
+    cin >> make;
+    cout << "Enter vehicle model: ";
+    cin >> model;
+    cout << "Enter vehicle year: ";
+    cin >> year;
+    cout << "Enter vehicle price: ";
+    cin >> price;
+
+    if (choice == 1) {
+        bool isElectric;
+        cout << "Is it electric? (1 for Yes, 0 for No): ";
+        cin >> isElectric;
+        vehicles.push_back(new Car(make, model, year, price, isElectric));
+    } else if (choice == 2) {
+        double loadCapacity;
+        cout << "Enter truck load capacity in tons: ";
+        cin >> loadCapacity;
+        vehicles.push_back(new Truck(make, model, year, price, loadCapacity));
+    } else {
+        cout << "Invalid choice.\n";
+    }
+}
+
+// Function to display all vehicles
+void displayAllVehicles(const vector<Vehicle*>& vehicles) {
+    cout << "\nDisplaying All Vehicles:\n";
+    for (const auto& vehicle : vehicles) {
+        vehicle->displayDetails();
+    }
+}
+
+int main() {
+    vector<Vehicle*> vehicles;
+
+    int choice;
+    while (true) {
+        cout << "\nVehicle Management System\n";
+        cout << "1. Add Vehicle\n";
+        cout << "2. Display All Vehicles\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addVehicle(vehicles);
+                break;
+            case 2:
+                displayAllVehicles(vehicles);
+                break;
+            case 3:
+                // Clean up dynamically allocated memory
+                for (Vehicle* vehicle : vehicles) {
+                    delete vehicle;
+                }
+                vehicles.clear();
+                cout << "Exiting program.\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
