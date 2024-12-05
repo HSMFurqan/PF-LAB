@@ -1,0 +1,95 @@
+// General Management System
+
+class Item {
+  constructor(name, attribute) {
+    this.name = name;
+    this.attribute = attribute; // e.g., price, author, or any other key detail
+    this.quantity = 0; // Default starting quantity
+  }
+}
+
+class ManagementSystem {
+  constructor(systemName) {
+    this.systemName = systemName;
+    this.items = []; // Array to store items
+  }
+
+  // Add a new item to the system
+  addItem(name, attribute) {
+    const newItem = new Item(name, attribute);
+    this.items.push(newItem);
+    console.log(`Item '${name}' added with attribute: ${attribute}.`);
+  }
+
+  // Update the quantity of an item by index
+  updateQuantity(index, quantity) {
+    if (index >= 0 && index < this.items.length) {
+      this.items[index].quantity += quantity;
+      console.log(
+        `Quantity of '${this.items[index].name}' updated to ${this.items[index].quantity}.`
+      );
+    } else {
+      console.log("Invalid item index.");
+    }
+  }
+
+  // Perform an operation like selling or borrowing an item
+  performAction(index, quantity, action) {
+    if (index >= 0 && index < this.items.length) {
+      if (this.items[index].quantity >= quantity) {
+        this.items[index].quantity -= quantity;
+        console.log(
+          `${quantity} units of '${this.items[index].name}' ${action}. Remaining quantity: ${this.items[index].quantity}.`
+        );
+      } else {
+        console.log(`Not enough quantity of '${this.items[index].name}' to ${action}.`);
+      }
+    } else {
+      console.log("Invalid item index.");
+    }
+  }
+
+  // Display all items in the system
+  displayItems() {
+    if (this.items.length === 0) {
+      console.log(`No items in the ${this.systemName}.`);
+    } else {
+      console.log(`${this.systemName} Catalog:`);
+      this.items.forEach((item, index) => {
+        console.log(
+          `${index}. '${item.name}' - Attribute: ${item.attribute}, Quantity: ${item.quantity}`
+        );
+      });
+    }
+  }
+
+  // Calculate total value based on quantity and attribute (e.g., price)
+  calculateTotal(attributeName = "attribute") {
+    let total = 0;
+    this.items.forEach((item) => {
+      total += item.quantity * item[attributeName];
+    });
+    console.log(`Total ${this.systemName} value: ${total}`);
+  }
+}
+
+// Example Usage
+const system = new ManagementSystem("General System");
+
+// Adding items
+system.addItem("Item1", 100); // Attribute as price
+system.addItem("Item2", 200); // Attribute as price
+
+// Updating quantities
+system.updateQuantity(0, 10); // Add 10 of Item1
+system.updateQuantity(1, 5);  // Add 5 of Item2
+
+// Perform an action (e.g., selling/borrowing)
+system.performAction(0, 2, "processed"); // Process 2 units of Item1
+system.performAction(1, 1, "processed"); // Process 1 unit of Item2
+
+// Display items
+system.displayItems();
+
+// Calculate total value
+system.calculateTotal();
