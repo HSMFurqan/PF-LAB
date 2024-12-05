@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Question Solver</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav>
+  <div>My App</div>
+  <div>
+    <a href="#hero">Home</a>
+    <a href="#why">Why</a>
+    <a href="#top">Top</a>
+    <a href="#login">Login</a>
+    <a href="#footer">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero" id="hero">
+  <h1>Welcome to Question Solver</h1>
+  <p>Your one-stop solution for all queries.</p>
+</div>
+
+<!-- Why Section -->
+<div class="section" id="why">
+  <h2>Why Choose Us?</h2>
+  <p>We provide fast, accurate, and reliable solutions to a wide range of problems.</p>
+</div>
+
+<!-- Top Section -->
+<div class="top-section" id="top">
+  <div class="card">
+    <h3>Math Problems</h3>
+    <p>Get step-by-step solutions to any math problem.</p>
+  </div>
+  <div class="card">
+    <h3>Science Questions</h3>
+    <p>Understand complex concepts in simple terms.</p>
+  </div>
+  <div class="card">
+    <h3>Programming</h3>
+    <p>Debug and optimize your code with ease.</p>
+  </div>
+</div>
+
+<!-- Login Section -->
+<div class="section" id="login">
+  <h2>Login to Your Account</h2>
+  <div class="login-form">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Enter your username">
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Enter your password">
+    <button>Login</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer" id="footer">
+  <p>&copy; 2024 Question Solver. All rights reserved.</p>
+</div>
+
+</body>
+</html>
