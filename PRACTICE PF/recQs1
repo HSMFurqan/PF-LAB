@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+// Recursive function to concatenate src to dest
+char* recursiveConcat(char* dest, const char* src) {
+    // Move to the end of dest string
+    if (*dest != '\0') {
+        recursiveConcat(dest + 1, src);
+    } else {
+        // Copy src string to dest
+        if (*src != '\0') {
+            *dest = *src;
+            recursiveConcat(dest + 1, src + 1);
+        } else {
+            *dest = '\0'; // Null-terminate the final string
+        }
+    }
+    return dest;
+}
+
+int main() {
+    char dest[100] = "FAST";   // Destination should have enough space
+    char src[] = " University";
+
+    recursiveConcat(dest, src);
+    printf("Concatenated String: %s\n", dest);
+
+    return 0;
+}
