@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Team {
+    int teamID;
+    char name[50];
+    int wins;
+    int losses;
+};
+
+// Function to add a new team
+void addTeam() {
+    FILE *f = fopen("teams.dat", "ab");
+    if (!f) {
+        printf("Error opening file.\n");
+        return;
+    }
+    struct Team t;
+    printf("Enter Team ID: ");
+    scanf("%d", &t.teamID);
+    printf("Enter Team Name: ");
+    scanf(" %[^\n]", t.name);
+    t.wins = 0;
+    t.losses = 0;
+    fwrite(&t, sizeof(struct Team), 1, f);
+    fclose(f);
+    printf("Team added successfully.\n");
+}
+
+// Function to update a team's record
+void updateRecord() {
+    int id, found = 0, isWin;
+    printf("Enter Team ID to update: ");
+    scanf("%d", &id);
+    printf("Enter 1 for win, 0 for loss: ");
+    scanf("%d", &isWin);
+
+    FILE *f = fopen("teams.dat", "rb+");
+    if (!f) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    struct Team t;
+    while (fread(&t, sizeof(t), 1, f)) {
+        if (t.teamID == id) {
+            found = 1;
+            if (isWin)
+                t.wins++;
+            else
+                t.losses++;
+
+            fseek(f, -sizeof(t), SEEK_CUR);
+            fwrite(&t, sizeof(t), 1, f);
+            printf("Record updated.\n");
+            break;
+        }
+    }
+    if (!found)
+        printf("Team not found.\n");
+
+    fclose(f);
+}
+
+// Function to read all teams and display highest win and highest win percentage
+void readRecords() {
+    FILE *f = fopen("teams.dat", "rb");
+    if (!f) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    struct Team t;
+    struct Team maxWinTeam = {0}, maxPercentTeam = {0};
+    float maxPercent = -1.0;
+
+    printf("\n--- All Teams ---\n");
+    while (fread(&t, sizeof(t), 1, f)) {
+        printf("ID: %d, Name: %s, Wins: %d, Losses: %d\n", t.teamID, t.name, t.wins, t.losses);
+
+        if (t.wins > maxWinTeam.wins)
+            maxWinTeam = t;
+
+        int total = t.wins + t.losses;
+        if (total > 0) {
+            float percent = (float)t.wins / total;
+            if (percent > maxPercent) {
+                maxPercent = percent;
+                maxPercentTeam = t;
+            }
+        }
+    }
+
+    printf("\nTeam with Most Wins: %s (%d wins)\n", maxWinTeam.name, maxWinTeam.wins);
+    if (maxPercent >= 0)
+        printf("Team with Highest Win %%: %s (%.2f%%)\n", maxPercentTeam.name, maxPercent * 100);
+    else
+        printf("No team has played any matches yet.\n");
+
+    fclose(f);
+}
+
+// Main menu
+int main() {
+    int choice;
+    do {
+        printf("\n--- Team Record Management Menu ---\n");
+        printf("1. Add New Team\n");
+        printf("2. Update Team Record\n");
+        printf("3. Read All Records\n");
+        printf("4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: addTeam(); break;
+            case 2: updateRecord(); break;
+            case 3: readRecords(); break;
+            case 4: printf("Exiting...\n"); break;
+            default: printf("Invalid choice.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
