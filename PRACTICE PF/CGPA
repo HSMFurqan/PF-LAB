@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to calculate SGPA
+float calculateSGPA(int *credits, float *grades, int subjects) {
+    int totalCredits = 0;
+    float totalPoints = 0.0;
+
+    for (int i = 0; i < subjects; i++) {
+        totalCredits += *(credits + i);
+        totalPoints += (*(grades + i)) * (*(credits + i));
+    }
+
+    return totalPoints / totalCredits;
+}
+
+// Function to calculate CGPA
+float calculateCGPA(float *sgpas, int semesters) {
+    float totalSGPA = 0.0;
+    for (int i = 0; i < semesters; i++) {
+        totalSGPA += *(sgpas + i);
+    }
+    return totalSGPA / semesters;
+}
+
+int main() {
+    int semesters;
+    printf("Enter number of semesters: ");
+    scanf("%d", &semesters);
+
+    float *sgpas = (float *)malloc(semesters * sizeof(float));
+
+    for (int s = 0; s < semesters; s++) {
+        int subjects;
+        printf("\nEnter number of subjects in Semester %d: ", s + 1);
+        scanf("%d", &subjects);
+
+        int *credits = (int *)malloc(subjects * sizeof(int));
+        float *grades = (float *)malloc(subjects * sizeof(float));
+
+        printf("Enter credit hours for each subject:\n");
+        for (int i = 0; i < subjects; i++)
+            scanf("%d", &credits[i]);
+
+        printf("Enter grade points (e.g., 4.0, 3.7, etc.) for each subject:\n");
+        for (int i = 0; i < subjects; i++)
+            scanf("%f", &grades[i]);
+
+        sgpas[s] = calculateSGPA(credits, grades, subjects);
+        printf("SGPA for Semester %d: %.2f\n", s + 1, sgpas[s]);
+
+        free(credits);
+        free(grades);
+    }
+
+    float cgpa = calculateCGPA(sgpas, semesters);
+    printf("\nFinal CGPA after %d semesters: %.2f\n", semesters, cgpa);
+
+    free(sgpas);
+    return 0;
+}
