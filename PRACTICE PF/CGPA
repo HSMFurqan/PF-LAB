@@ -1,61 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Function to calculate SGPA
-float calculateSGPA(int *credits, float *grades, int subjects) {
-    int totalCredits = 0;
-    float totalPoints = 0.0;
+typedef struct {
+    char name[50];
+    int roll;
+    int numSubjects;
+    int *credits;
+    float *grades;
+    float sgpa;
+} Student;
 
-    for (int i = 0; i < subjects; i++) {
-        totalCredits += *(credits + i);
+// Function to calculate SGPA
+float calculateSGPA(int *credits, float *grades, int n) {
+    float totalPoints = 0;
+    int totalCredits = 0;
+
+    for (int i = 0; i < n; i++) {
         totalPoints += (*(grades + i)) * (*(credits + i));
+        totalCredits += *(credits + i);
     }
 
     return totalPoints / totalCredits;
 }
 
-// Function to calculate CGPA
-float calculateCGPA(float *sgpas, int semesters) {
-    float totalSGPA = 0.0;
-    for (int i = 0; i < semesters; i++) {
-        totalSGPA += *(sgpas + i);
-    }
-    return totalSGPA / semesters;
-}
-
 int main() {
-    int semesters;
-    printf("Enter number of semesters: ");
-    scanf("%d", &semesters);
+    int numStudents;
+    printf("Enter number of students: ");
+    scanf("%d", &numStudents);
 
-    float *sgpas = (float *)malloc(semesters * sizeof(float));
+    // Allocate memory for student records
+    Student *students = (Student *)malloc(numStudents * sizeof(Student));
 
-    for (int s = 0; s < semesters; s++) {
-        int subjects;
-        printf("\nEnter number of subjects in Semester %d: ", s + 1);
-        scanf("%d", &subjects);
+    for (int i = 0; i < numStudents; i++) {
+        printf("\n--- Enter details for Student %d ---\n", i + 1);
 
-        int *credits = (int *)malloc(subjects * sizeof(int));
-        float *grades = (float *)malloc(subjects * sizeof(float));
+        printf("Name: ");
+        scanf(" %[^\n]", (students + i)->name);
 
-        printf("Enter credit hours for each subject:\n");
-        for (int i = 0; i < subjects; i++)
-            scanf("%d", &credits[i]);
+        printf("Roll Number: ");
+        scanf("%d", &(students + i)->roll);
 
-        printf("Enter grade points (e.g., 4.0, 3.7, etc.) for each subject:\n");
-        for (int i = 0; i < subjects; i++)
-            scanf("%f", &grades[i]);
+        printf("Enter number of subjects: ");
+        scanf("%d", &(students + i)->numSubjects);
 
-        sgpas[s] = calculateSGPA(credits, grades, subjects);
-        printf("SGPA for Semester %d: %.2f\n", s + 1, sgpas[s]);
+        int n = (students + i)->numSubjects;
 
-        free(credits);
-        free(grades);
+        // Allocate memory for credits and grades
+        (students + i)->credits = (int *)malloc(n * sizeof(int));
+        (students + i)->grades = (float *)malloc(n * sizeof(float));
+
+        printf("Enter credits for each subject:\n");
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &((students + i)->credits[j]));
+        }
+
+        printf("Enter grade points for each subject:\n");
+        for (int j = 0; j < n; j++) {
+            scanf("%f", &((students + i)->grades[j]));
+        }
+
+        // Calculate SGPA
+        (students + i)->sgpa = calculateSGPA((students + i)->credits, (students + i)->grades, n);
     }
 
-    float cgpa = calculateCGPA(sgpas, semesters);
-    printf("\nFinal CGPA after %d semesters: %.2f\n", semesters, cgpa);
+    printf("\n========= Student SGPA Records =========\n");
+    float totalSGPA = 0;
+    for (int i = 0; i < numStudents; i++) {
+        printf("Name: %s\n", (students + i)->name);
+        printf("Roll: %d\n", (students + i)->roll);
+        printf("SGPA: %.2f\n\n", (students + i)->sgpa);
+        totalSGPA += (students + i)->sgpa;
 
-    free(sgpas);
+        // Free individual subject memory
+        free((students + i)->credits);
+        free((students + i)->grades);
+    }
+
+    float cgpa = totalSGPA / numStudents;
+    printf("Overall CGPA of all students: %.2f\n", cgpa);
+
+    // Free overall student memory
+    free(students);
+
     return 0;
 }
