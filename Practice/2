@@ -1,0 +1,50 @@
+# Q2: Best First Search
+
+import heapq
+
+heuristics = {
+    "T0": 5,
+    "T1": 3,
+    "T2": 4,
+    "T3": 2,
+    "T4": 1,
+    "T5": 2,
+    "T6": 0
+}
+
+graph = {
+    "T0": ["T1", "T2"],
+    "T1": ["T3", "T4"],
+    "T2": ["T5"],
+    "T3": ["T6"],
+    "T4": ["T6"],
+    "T5": ["T6"],
+    "T6": []
+}
+
+# build dependency count
+dependencies = {task: 0 for task in graph}
+for task in graph:
+    for child in graph[task]:
+        dependencies[child] += 1
+
+# priority queue
+pq = []
+
+# add tasks with no dependencies
+for task in dependencies:
+    if dependencies[task] == 0:
+        heapq.heappush(pq, (heuristics[task], task))
+
+order = []
+
+while pq:
+    _, task = heapq.heappop(pq)
+    order.append(task)
+
+    for neighbor in graph[task]:
+        dependencies[neighbor] -= 1
+        if dependencies[neighbor] == 0:
+            heapq.heappush(pq, (heuristics[neighbor], neighbor))
+
+print("Best First Execution Order:", order)
