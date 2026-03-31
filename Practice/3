@@ -1,0 +1,75 @@
+# Q3: Genetic Algorithm
+
+import random
+
+POP_SIZE = 4
+CHROMOSOME_LENGTH = 4
+MUTATION_RATE = 0.1
+
+def fitness(x):
+    return x*x - 3*x + 4
+
+def binary_to_decimal(b):
+    return int(b, 2)
+
+# Step a: random population
+population = [format(random.randint(0,15),'04b') for _ in range(POP_SIZE)]
+
+print("Initial Population:", population)
+
+# Step b: evaluate fitness
+fitness_values = []
+for chrom in population:
+    x = binary_to_decimal(chrom)
+    f = fitness(x)
+    fitness_values.append(f)
+    print(chrom, "->", x, "fitness:", f)
+
+# roulette selection
+total_fitness = sum(fitness_values)
+probabilities = [f/total_fitness for f in fitness_values]
+
+selected = random.choices(population, weights=probabilities, k=POP_SIZE)
+print("\nSelected Parents:", selected)
+
+# crossover
+offspring = []
+for i in range(0, POP_SIZE, 2):
+    p1 = selected[i]
+    p2 = selected[i+1]
+
+    point = random.randint(1, CHROMOSOME_LENGTH-1)
+    child1 = p1[:point] + p2[point:]
+    child2 = p2[:point] + p1[point:]
+
+    offspring.extend([child1, child2])
+
+print("After Crossover:", offspring)
+
+# mutation
+mutated = []
+for chrom in offspring:
+    new = ""
+    for bit in chrom:
+        if random.random() < MUTATION_RATE:
+            new += '1' if bit == '0' else '0'
+        else:
+            new += bit
+    mutated.append(new)
+
+print("After Mutation:", mutated)
+
+# find best
+best = None
+best_fit = -1
+
+for chrom in mutated:
+    x = binary_to_decimal(chrom)
+    f = fitness(x)
+    if f > best_fit:
+        best_fit = f
+        best = chrom
+
+print("\nBest Chromosome:", best)
+print("Decimal Value:", binary_to_decimal(best))
+print("Fitness:", best_fit)
