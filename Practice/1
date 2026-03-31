@@ -1,0 +1,45 @@
+# Q1: Utility-based cleaning robot
+
+grid = [
+    ['S', 2, 0, 0, 1],
+    [0, 'X', 1, 2, 0],
+    [0, 2, 0, 'X', 0],
+    [0, 0, 1, 0, 2]
+]
+
+rows = len(grid)
+cols = len(grid[0])
+max_moves = 8
+
+# find start
+for i in range(rows):
+    for j in range(cols):
+        if grid[i][j] == 'S':
+            start = (i, j)
+
+directions = [(-1,0),(1,0),(0,-1),(0,1)]
+best_score = 0
+
+def dfs(x, y, moves, visited, score):
+    global best_score
+
+    if moves > max_moves:
+        return
+
+    best_score = max(best_score, score)
+
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+
+        if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] != 'X':
+            cell_value = 0
+            if (nx, ny) not in visited and isinstance(grid[nx][ny], int):
+                cell_value = grid[nx][ny]
+
+            visited.add((nx, ny))
+            dfs(nx, ny, moves + 1, visited, score + cell_value)
+            visited.remove((nx, ny))
+
+dfs(start[0], start[1], 0, set([start]), 0)
+
+print("Maximum cleanliness score:", best_score)
